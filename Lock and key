@@ -1,0 +1,83 @@
+Here's a Dart class that performs password operations including validation and generation of strong, intermediate, and low-strength passwords. I've included comments and documentation for clarity.
+
+import 'dart:math';
+
+/// A class to handle password operations such as validation and generation
+class PasswordManager {
+  final Random _random = Random();
+
+  /// Validates the strength of a password
+  ///
+  /// Returns:
+  /// - 'Strong' if it has at least 12 characters, a mix of upper/lower case, numbers and symbols
+  /// - 'Intermediate' if it has at least 8 characters with letters and numbers
+  /// - 'Low' if it has less than 8 characters or lacks variety
+  String validateStrength(String password) {
+    final hasUpper = password.contains(RegExp(r'[A-Z]'));
+    final hasLower = password.contains(RegExp(r'[a-z]'));
+    final hasDigit = password.contains(RegExp(r'[0-9]'));
+    final hasSpecial = password.contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]'));
+    final length = password.length;
+
+    if (length >= 12 && hasUpper && hasLower && hasDigit && hasSpecial) {
+      return 'Strong';
+    } else if (length >= 8 && hasLower && hasDigit) {
+      return 'Intermediate';
+    } else {
+      return 'Low';
+    }
+  }
+
+  /// Generates a password of given [length] using [charSet]
+  String _generatePassword(int length, String charSet) {
+    return List.generate(length, (_) => charSet[_random.nextInt(charSet.length)]).join();
+  }
+
+  /// Generates a strong password (12-16 characters, includes upper, lower, digits, and special characters)
+  String generateStrongPassword() {
+    const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lower = 'abcdefghijklmnopqrstuvwxyz';
+    const digits = '0123456789';
+    const special = '!@#\$%^&*()_+[]{}<>?';
+    final allChars = upper + lower + digits + special;
+
+    return _generatePassword(_random.nextInt(5) + 12, allChars);
+  }
+
+  /// Generates an intermediate password (8-10 characters, includes letters and digits)
+  String generateIntermediatePassword() {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return _generatePassword(_random.nextInt(3) + 8, chars);
+  }
+
+  /// Generates a low strength password (4-7 characters, only lowercase letters)
+  String generateLowPassword() {
+    const chars = 'abcdefghijklmnopqrstuvwxyz';
+    return _generatePassword(_random.nextInt(4) + 4, chars);
+  }
+}
+
+void main() {
+  final manager = PasswordManager();
+
+  print('Generated Strong Password: ${manager.generateStrongPassword()}');
+  print('Generated Intermediate Password: ${manager.generateIntermediatePassword()}');
+  print('Generated Low Password: ${manager.generateLowPassword()}');
+
+  // Example validation
+  print('Strength of "Abc123!@#xyz": ${manager.validateStrength("Abc123!@#xyz")}');
+  print('Strength of "abc12345": ${manager.validateStrength("abc12345")}');
+  print('Strength of "pass": ${manager.validateStrength("pass")}');
+}
+
+Notes:
+
+You can run this as a CLI tool using Dart's command-line utilities.
+
+Adjust character sets and length ranges as needed for specific use cases.
+
+Refer to Dart Academy CLI Guide for packaging as a command-line tool.
+
+
+Let me know if you want the CLI version or integration with user input via terminal.
+
